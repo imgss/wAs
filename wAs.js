@@ -188,6 +188,7 @@ function sheepMove(e) {
     var keyID = e.keyCode ? e.keyCode : e.which,
         moveBlocks;
     if (keyID === 38 || keyID === 87) { // up arrow and W
+        if (sheep.y === 10) return
         moveBlocks = wallAffect('up');
         if (moveBlocks.every(function(e) { return e.y > 0; })) {
             moveBlocks.forEach(function(ele) { ele.y -= 20 });
@@ -196,6 +197,7 @@ function sheepMove(e) {
         }
     }
     if (keyID === 39 || keyID === 68) { // right arrow and D
+        if (sheep.x === 490) return
         moveBlocks = wallAffect('right');
         if (moveBlocks.every(function(e) { return e.x < can.width - 20; })) {
             moveBlocks.forEach(function(ele) { ele.x += 20 });
@@ -204,6 +206,7 @@ function sheepMove(e) {
         }
     }
     if (keyID === 40 || keyID === 83) { // down arrow and S
+        if (sheep.y === 490) return
         moveBlocks = wallAffect('down');
         if (moveBlocks.every(function(e) { return e.y < can.height - 20; })) {
             moveBlocks.forEach(function(ele) {
@@ -214,6 +217,8 @@ function sheepMove(e) {
         }
     }
     if (keyID === 37 || keyID === 65) { // left arrow and A
+        
+        if (sheep.x === 10) return
         moveBlocks = wallAffect('left');
         if (moveBlocks.every(e => e.x > 0)) {
             moveBlocks.forEach(function(ele) {
@@ -285,9 +290,10 @@ function draw() {
     wolf.move();
     wallsDraw();
     sheepDraw();
+    requestAnimationFrame(draw);
 }
 wallsInit();
-setInterval(draw, 1000 / 30);
+draw();
 drawGrid('rgba(100,100,100,0.3)', 20, 20);
 can.addEventListener('keydown', sheepMove);
 document.addEventListener('keydown', sheepMove);
