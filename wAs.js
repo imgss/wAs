@@ -232,14 +232,15 @@ function sheepMove(e) {
     }
     gridData = Array(25).fill().map( () => Array(25).fill(0));
     walls.forEach(w => gridData[w.y / 20][w.x / 20] = 1)
+    wolf.path = null;
 }
 //狼的绘制和运动代码
 function wolfDraw() {
     context.save();
     context.fillStyle = "#39A234";
     context.beginPath();
-    var p0x = wolf.x;
-    var p0y = wolf.y;
+    var p0x = wolf.x + 10;
+    var p0y = wolf.y + 10;
     var line = 10;
     context.moveTo(p0x + 10, p0y);
     for (var i = 1; i < 6; i++) {
@@ -254,7 +255,7 @@ wolf.move = (function() {
     let timeStemp = Date.now();
     return function() {
         let now = Date.now()
-        if (now - timeStemp < 1000) return;
+        if (now - timeStemp < 500) return;
         timeStemp = now;
 
         if (!wolf.path) {
