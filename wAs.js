@@ -1,11 +1,15 @@
 /**
  * Created by gg on 2016/9/7.
  */
-var walls = [],
+let walls = [],
     sheep = { x: 250, y: 250 },
-    wolf = { x: 10, y: 10, draw: wolfDraw, move: wolfMove, direction: { x: 1, y: 1 } };
-var can = document.getElementById('map'), context = can.getContext('2d'),
+    wolf = { x: 0, y: 0, draw: wolfDraw, direction: { x: 1, y: 1 } };
+let can = document.getElementById('map'), context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
+const GRID_NUM = 25;
+const CELL_W = 20;
+
+let gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
 class Steps {
     constructor() {
         this.stack = [];
@@ -50,32 +54,32 @@ function drawGrid(color, stepx, stepy) {
     ctx.restore();
 }
 
-function Block(x, y, index) { //创建砖块
+function Block(x, y) { //创建砖块
     this.x = x;
     this.y = y;
-    this.index = index;
+}
+Block.prototype.draw = function() {
+    context.save();
+    context.fillRect(this.x + 1, this.y + 1, 19, 19);
+    context.restore();
 }
 
 function wallsInit() {
-    var index = 0;
     for (var i = 80; i < can.width - 80; i += 20) {
         for (var j = 80; j < can.width - 80; j += 20) {
             if (!((i > 200 && i < 280) && (j > 200 && j < 280))) { //留下中间3*3个空格
-                walls.push(new Block(i, j, index++));
+                walls.push(new Block(i, j));
+                gridData[i/20][j/20] = 1;
             }
         }
     }
 }
 //画出墙
 function wallsDraw() { 
-    context.save();
     context.fillStyle = 'rgba(255,165,0,0.5)';
-    
-    walls.forEach(function(element, index, array) {
-        context.fillRect(element.x, element.y, 18, 18);
+    walls.forEach(function(wall) {
+        wall.draw();
     });
-    context.restore();
-    return walls;
 }
 //画出羊
 function sheepDraw() { 
@@ -128,7 +132,6 @@ function wallAffect(dir, wl) {
     var wallToMove = [],
         wl = wl || wallLine(dir),
         pointer; //羊运动影响的砖块集合,edge检测边界
-        console.log({wl:JSON.stringify(wl),sheep:JSON.stringify(sheep)});
     switch (dir) {
         case "up":
             {
@@ -180,7 +183,6 @@ function wallAffect(dir, wl) {
             }
             break;
     }
-    console.log(wallToMove.length);
     return wallToMove;
 }
 
@@ -228,11 +230,13 @@ function sheepMove(e) {
             e.preventDefault();
         }
     }
+    gridData = Array(25).fill().map( () => Array(25).fill(0));
+    walls.forEach(w => gridData[w.y / 20][w.x / 20] = 1)
 }
 //狼的绘制和运动代码
 function wolfDraw() {
     context.save();
-    context.fillStyle = "#39A234"
+    context.fillStyle = "#39A234";
     context.beginPath();
     var p0x = wolf.x;
     var p0y = wolf.y;
@@ -246,43 +250,31 @@ function wolfDraw() {
     context.restore();
 }
 
-function wolfMove() {
-    return
-    if (sheep.y - wolf.y > 0) {
+wolf.move = (function() {
+    let timeStemp = Date.now();
+    return function() {
+        let now = Date.now()
+        if (now - timeStemp < 1000) return;
+        timeStemp = now;
 
-        wolf.direction.y = 1;
-    } else if (sheep.x - wolf.x == 0) {
-
-        wolf.direction.y = -1;
-    } else {
-        wolf.direction.y = 0;
-    }
-    if (sheep.x - wolf.x > 0) {
-
-        wolf.direction.x = 1;
-    } else if (sheep.x - wolf.x == 0) {
-
-        wolf.direction.x = 0;
-    } else {
-        wolf.direction.x = -1;
-    }
-    if (wolf.x >= can.width || wolf.x < 0) {
-        wolf.direction.x = -wolf.direction.x;
-    }
-    if (wolf.y >= can.height || wolf.y < 0) {
-        wolf.direction.y = -wolf.direction.y;
-    }
-    for (let wall of walls) {
-        if (wall.x == wolf.x + 20 && wall.x == wolf.x + 20) {
-            wolf.direction.x = -wolf.direction.x;
-            wolf.direction.y = -wolf.direction.y;
+        if (!wolf.path) {
+            let pathFinder = new Pathfinder(gridData, [(sheep.x - 10)/20, (sheep.y - 10)/20]);
+            pathFinder.beginFill(wolf);
+            if (pathFinder.path) {
+                wolf.path = pathFinder.path
+            }
+        }
+        if (wolf.path) {
+            let point = wolf.path.shift();
+            if (point) {
+                wolf.x = point[0] * 20;
+                wolf.y = point[1] * 20;
+            } else {
+                wolf.path = null
+            }
         }
     }
-
-    wolf.x += wolf.direction.x;
-    wolf.y += wolf.direction.y;
-
-}
+})();
 
 function draw() {
     context.clearRect(0, 0, can.width, can.height);
@@ -294,6 +286,6 @@ function draw() {
 }
 wallsInit();
 draw();
-drawGrid('rgba(100,100,100,0.3)', 20, 20);
+drawGrid('rgba(100,100,100,0.3)', can.width / GRID_NUM, can.height / GRID_NUM);
 can.addEventListener('keydown', sheepMove);
 document.addEventListener('keydown', sheepMove);
