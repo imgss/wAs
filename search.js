@@ -134,27 +134,20 @@ Pathfinder = (function() {
     var candidateNode, node;
     candidateNode = this.data[this.cToI(x, y)];
     node = this.data[this.cToI(x + 1, y)];
-    if (node) {
-      try{
-        if (node.visited && node.index < candidateNode.index) {
-          candidateNode = node;
-        }
-        node = this.data[this.cToI(x - 1, y)];
-        if (node.visited && node.index < candidateNode.index) {
-          candidateNode = node;
-        }
-        node = this.data[this.cToI(x, y + 1)];
-        if (node.visited && node.index < candidateNode.index) {
-          candidateNode = node;
-        }
-        node = this.data[this.cToI(x, y - 1)];
-        if (node.visited && node.index < candidateNode.index) {
-          candidateNode = node;
-        }
-      } catch(err) {
-        console.log(node)
-        throw(err)
-      }
+    if (node && node.visited && node.index < candidateNode.index) {
+      candidateNode = node;
+    }
+    node = this.data[this.cToI(x - 1, y)];
+    if (node && node.visited && node.index < candidateNode.index) {
+      candidateNode = node;
+    }
+    node = this.data[this.cToI(x, y + 1)];
+    if (node && node.visited && node.index < candidateNode.index) {
+      candidateNode = node;
+    }
+    node = this.data[this.cToI(x, y - 1)];
+    if (node && node.visited && node.index < candidateNode.index) {
+      candidateNode = node;
     }
     return candidateNode;
   };
