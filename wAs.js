@@ -2,7 +2,7 @@
  * Created by gg on 2016/9/7.
  */
 let walls = [],
-    sheep = { x: 250, y: 250 },
+    sheep = { x: 240, y: 240 },
     wolf = { x: 0, y: 0, size: 10, direction: { x: 1, y: 1 } };
 let can = document.getElementById('map'), context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
@@ -16,7 +16,7 @@ class Steps {
         this.stack = [];
     }
     addStep(step) {
-        this.stack.push(step)
+        this.stack.push(step);
     }
     back() {
         let step = this.stack.pop()
@@ -54,17 +54,22 @@ function drawGrid(color, stepx, stepy) {
 
     ctx.restore();
 }
-
-function Block(x, y) { //创建砖块
-    this.x = x;
-    this.y = y;
+// 砖块
+class Block{
+    constructor(x, y) { //创建砖块
+        this.x = x;
+        this.y = y;
+    }
+    draw() {
+        context.save();
+        context.fillRect(this.x + 1, this.y + 1, 19, 19);
+        context.restore();
+    }
 }
-Block.prototype.draw = function() {
-    context.save();
-    context.fillRect(this.x + 1, this.y + 1, 19, 19);
-    context.restore();
-}
 
+function sameLocation(a, b) {
+    return a.x === b.x && a.y === b.y
+}
 function wallsInit() {
     for (var i = 80; i < can.width - 80; i += 20) {
         for (var j = 80; j < can.width - 80; j += 20) {
@@ -87,7 +92,7 @@ function sheepDraw() {
     context.save();
     context.fillStyle = '#823f29';
     context.beginPath();
-    context.arc(sheep.x, sheep.y, 10, 0, Math.PI * 2);
+    context.arc(sheep.x + 10, sheep.y + 10, 10, 0, Math.PI * 2);
     context.fill();
     context.restore();
 }
@@ -97,28 +102,28 @@ function wallLine(direction) { //选出羊上面的砖块
     switch (direction) {
         case 'up':
             for (var i = 0; i < 280; i++) {
-                if (walls[i].x == sheep.x - 10 && walls[i].y <= sheep.y) {
+                if (walls[i].x == sheep.x && walls[i].y <= sheep.y) {
                     wallLine.push(walls[i]);
                 }
             }
             break;
         case 'down':
             for (var i = 0; i < 280; i++) {
-                if (walls[i].x == sheep.x - 10 && walls[i].y >= sheep.y) {
+                if (walls[i].x == sheep.x && walls[i].y >= sheep.y) {
                     wallLine.push(walls[i]);
                 }
             }
             break;
         case 'left':
             for (var i = 0; i < 280; i++) {
-                if (walls[i].y == sheep.y - 10 && walls[i].x <= sheep.x) {
+                if (walls[i].y == sheep.y && walls[i].x <= sheep.x) {
                     wallLine.push(walls[i]);
                 }
             }
             break;
         case 'right':
             for (var i = 0; i < 280; i++) {
-                if (walls[i].y == sheep.y - 10 && walls[i].x >= sheep.x) {
+                if (walls[i].y == sheep.y && walls[i].x >= sheep.x) {
                     wallLine.push(walls[i]);
                 }
             }
@@ -135,7 +140,7 @@ function wallAffect(dir, wl) {
     switch (dir) {
         case "up":
             {
-                pointer = sheep.y - 10;
+                pointer = sheep.y;
                 wl.sort((a, b) => a.y - b.y)
                 for (var j = wl.length - 1; j >= 0; j--) {
                     if (pointer - wl[j].y == 20) {
@@ -148,7 +153,7 @@ function wallAffect(dir, wl) {
         case "down":
             {
                 //if(can.height-wl[wl.length-1].y < 20) return false;//顶到墙了
-                pointer = sheep.y - 10;
+                pointer = sheep.y;
                 wl.sort((a, b) => a.y - b.y)
                 for (var j = 0; j < wl.length; j++) {
                     if (wl[j].y - pointer == 20) {
@@ -160,7 +165,7 @@ function wallAffect(dir, wl) {
             break;
         case "left":
             {
-                pointer = sheep.x - 10;
+                pointer = sheep.x;
                 wl.sort((a, b) => a.x - b.x);
                 for (var k = wl.length - 1; k >= 0; k--) {
                     if (pointer - wl[k].x == 20) {
@@ -172,7 +177,7 @@ function wallAffect(dir, wl) {
             break;
         case "right":
             {
-                pointer = sheep.x - 10;
+                pointer = sheep.x;
                 wl.sort((a, b) => a.x - b.x);
                 for (var m = 0; m < wl.length; m++) {
                     if (wl[m].x - pointer == 20) {
@@ -253,9 +258,7 @@ wolf.draw = function() {
 
 wolf.move = (function() {
     let timeStemp = Date.now();
-    function sameLocation(wolf, sheep) {
-        return wolf.x === sheep.x - 10 && wolf.y === sheep.y - 10
-    }
+
     return function() {
         let now = Date.now()
         if (now - timeStemp < 500) return;
@@ -266,7 +269,7 @@ wolf.move = (function() {
             return;
         }
         if (!wolf.path) {
-            let pathFinder = new Pathfinder(gridData, [(sheep.x - 10)/20, (sheep.y - 10)/20]);
+            let pathFinder = new Pathfinder(gridData, [(sheep.x)/20, (sheep.y)/20]);
             pathFinder.beginFill(wolf);
             if (pathFinder.path) {
                 wolf.path = pathFinder.path;
