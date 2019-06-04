@@ -3,7 +3,7 @@
  */
 let walls = [],
     sheep = { x: 250, y: 250 },
-    wolf = { x: 0, y: 0, draw: wolfDraw, direction: { x: 1, y: 1 } };
+    wolf = { x: 0, y: 0, size: 10, direction: { x: 1, y: 1 } };
 let can = document.getElementById('map'), context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
 const GRID_NUM = 25;
@@ -125,7 +125,6 @@ function wallLine(direction) { //选出羊上面的砖块
             break;
     }
     return wallLine;
-
 }
 
 // 返回需要移动的砖块
@@ -236,16 +235,16 @@ function sheepMove(e) {
     wolf.path = null;
 }
 //狼的绘制和运动代码
-function wolfDraw() {
+wolf.draw = function() {
     context.save();
     context.fillStyle = "#39A234";
     context.beginPath();
     var p0x = wolf.x + 10;
     var p0y = wolf.y + 10;
-    var line = 10;
-    context.moveTo(p0x + 10, p0y);
+    var size = wolf.size;
+    context.moveTo(p0x + size, p0y);
     for (var i = 1; i < 6; i++) {
-        context.lineTo(p0x + line * Math.cos(Math.PI / 3 * i), p0y - line * Math.sin(Math.PI / 3 * i));
+        context.lineTo(p0x + size * Math.cos(Math.PI / 3 * i), p0y - size * Math.sin(Math.PI / 3 * i));
     }
     context.closePath();
     context.fill();
@@ -270,17 +269,20 @@ wolf.move = (function() {
             let pathFinder = new Pathfinder(gridData, [(sheep.x - 10)/20, (sheep.y - 10)/20]);
             pathFinder.beginFill(wolf);
             if (pathFinder.path) {
-                wolf.path = pathFinder.path
+                wolf.path = pathFinder.path;
             }
         }
         if (wolf.path) {
+            wolf.size = 10;
             let point = wolf.path.shift();
             if (point) {
                 wolf.x = point[0] * 20;
                 wolf.y = point[1] * 20;
             } else {
-                wolf.path = null
+                wolf.path = null;
             }
+        } else {
+            wolf.size = wolf.size === 10 ? 12 : 10;
         }
     }
 })();
