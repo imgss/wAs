@@ -6,9 +6,9 @@ Pathfinder = (function() {
   function Pathfinder(gridData, targetPosition, foundCallback, fillCallback, visitedCallback) {
     this.gridData = gridData;
     this.targetPosition = targetPosition;
-    this.fillCallback = fillCallback || function(){};
-    this.visitedCallback = visitedCallback || function(){};
-    this.foundCallback = foundCallback || function(){console.log(arguments);console.log('found!!!')};
+    this.fillCallback = fillCallback;
+    this.visitedCallback = visitedCallback;
+    this.foundCallback = foundCallback;
     this.width = this.gridData[0].length;
     this.height = this.gridData.length;
   }
@@ -81,7 +81,7 @@ Pathfinder = (function() {
       node.index = nodeIndex + 1;
       node.open = false;
       node.visited = true;
-      this.visitedCallback(x, y, node.index);
+      this.visitedCallback && this.visitedCallback(x, y, node.index);
     }
     _ref = this.targetPosition, tX = _ref[0], tY = _ref[1];
     if (x === tX && y === tY) {
@@ -93,7 +93,7 @@ Pathfinder = (function() {
     var node;
     node = this.data[this.cToI(x, y)];
     node.open = false;
-    return this.fillCallback(x, y, node.index);
+    this.fillCallback && this.fillCallback(x, y, node.index);
   };
 
   Pathfinder.prototype.targetFound = function() {
@@ -112,7 +112,7 @@ Pathfinder = (function() {
     var path;
     path = this.solutionPath.reverse();
     this.path = path.slice(1);
-    return this.foundCallback(path);
+    this.foundCallback && this.foundCallback(path);
   };
 
   Pathfinder.prototype.walkSolution = function() {

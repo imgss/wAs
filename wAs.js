@@ -8,6 +8,7 @@ let can = document.getElementById('map'), context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
 const GRID_NUM = 25;
 const CELL_W = 20;
+let gameOver = false;
 
 let gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
 class Steps {
@@ -253,11 +254,18 @@ function wolfDraw() {
 
 wolf.move = (function() {
     let timeStemp = Date.now();
+    function sameLocation(wolf, sheep) {
+        return wolf.x === sheep.x - 10 && wolf.y === sheep.y - 10
+    }
     return function() {
         let now = Date.now()
         if (now - timeStemp < 500) return;
         timeStemp = now;
-
+        if (sameLocation(wolf, sheep)) {
+            alert('你被抓住了');
+            gameOver = true;
+            return;
+        }
         if (!wolf.path) {
             let pathFinder = new Pathfinder(gridData, [(sheep.x - 10)/20, (sheep.y - 10)/20]);
             pathFinder.beginFill(wolf);
@@ -279,11 +287,11 @@ wolf.move = (function() {
 
 function draw() {
     context.clearRect(0, 0, can.width, can.height);
-    wolf.draw();
     wolf.move();
     wallsDraw();
     sheepDraw();
-    requestAnimationFrame(draw);
+    wolf.draw();
+    !gameOver && requestAnimationFrame(draw);
 }
 wallsInit();
 draw();
