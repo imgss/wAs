@@ -1,13 +1,21 @@
+import Pathfinder from './search';
+
+function sameLocation(a, b) {
+  return a.x === b.x && a.y === b.y;
+}
 class Wolf{
   constructor(x = 0, y = 0, size = 10) {
-    this.x = x
-    this.y = y
-    this.size = size
-    this.isCallHelped = false
-    this.stuck = 0
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.isCallHelped = false;
+    this.stuck = 0;
+
+    this._timeStamp = Date.now();
   }
   //狼的绘制和运动代码
   draw() {
+    let context = window.context;
     context.save();
     context.fillStyle = "#39A234";
     context.beginPath();
@@ -23,49 +31,51 @@ class Wolf{
     context.restore();
   }
 
-  move = (function() {
-    let timeStemp = Date.now();
-
-    return function() {
-        let now = Date.now()
-        if (now - timeStemp < 500) return;
-        timeStemp = now;
-        if (sameLocation(wolf, sheep)) {
-            alert('你被抓住了');
-            gameOver = true;
-            return;
-        }
-        if (!this.path) {
-            let pathFinder = new Pathfinder(gridData, [(sheep.x)/20, (sheep.y)/20]);
-            console.time('finding')
-            pathFinder.beginFill(this);
-            console.timeEnd('finding')
-            if (pathFinder.path) {
-                this.path = pathFinder.path;
-            }
-        }
-        if (this.path) {
-            this.size = 10;
-            this.stuck = 0;
-            let point = this.path.shift();
-            if (point) {
-                this.x = point[0] * 20;
-                this.y = point[1] * 20;
-            } else {
-                this.path = null;
-            }
-        } else {
-            this.size = this.size === 10 ? 12 : 10;
-            this.stuck++;
-            if (this.stuck > 6 && !this.isCallHelped) {
-              Wolf.callHelp();
-              this.isCallHelped = true;
-            }
-        }
-    }
-  })();
+  move() {
+      let now = Date.now();
+      if (now - this._timeStamp < 500) return;
+      this._timeStamp = now;
+      if (sameLocation(this, window.sheep)) {
+          alert('你被抓住了');
+          window.gameOver = true;
+          return;
+      }
+      if (!this.path) {
+          let sheep = window.sheep;
+          let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/20, (sheep.y)/20]);
+          pathFinder.beginFill(this);
+          if (pathFinder.path) {
+              this.path = pathFinder.path;
+          }
+      }
+      if (this.path) {
+          this.size = 10;
+          this.stuck = 0;
+          let point = this.path.shift();
+          if (point) {
+              this.x = point[0] * 20;
+              this.y = point[1] * 20;
+          } else {
+              this.path = null;
+          }
+      } else {
+          this.size = this.size === 10 ? 12 : 10;
+          this.stuck++;
+          if (this.stuck > 6 && !this.isCallHelped) {
+            Wolf.callHelp();
+            this.isCallHelped = true;
+          }
+      }
+  }
 
   static callHelp() {
-    wolves.push(new Wolf(480, 0))
+    if (Wolf.wolves.length > 3) {
+      return;
+    }
+    // TODO: 利用pathFinder，优化狼出现的位置
+    Wolf.wolves.push(new Wolf(480, 0));
   }
+
 }
+Wolf.wolves = [];
+export default Wolf;

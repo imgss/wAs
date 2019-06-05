@@ -1,19 +1,23 @@
 /**
  * Created by gg on 2016/9/7.
  */
+import Wolf from './wolf';
+
 let walls = [],
-    wolves = [],
-    sheep = { x: 480, y: 480 };
+    wolves = Wolf.wolves;
+window.sheep = { x: 420, y: 360 };
+let sheep = window.sheep;
+
 let can = document.getElementById('game'), 
     context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
+window.context = context;
 const GRID_NUM = 25;
 const CELL_W = 20;
-let gameOver = false;
+let gameOver = window.gameOver = false;
 let wolf = new Wolf(0, 0);
 wolves.push(wolf);
-let gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
-
+window.gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
 // 画网格
 function drawGrid(color, stepx, stepy) {
     ctx.save();
@@ -50,15 +54,13 @@ class Block{
     }
 }
 
-function sameLocation(a, b) {
-    return a.x === b.x && a.y === b.y
-}
+
 function wallsInit() {
     for (var i = 80; i < can.width - 80; i += 20) {
         for (var j = 80; j < can.width - 80; j += 20) {
             if (!((i > 200 && i < 280) && (j > 200 && j < 280))) { //留下中间3*3个空格
                 walls.push(new Block(i, j));
-                gridData[i/20][j/20] = 1;
+                window.gridData[i/20][j/20] = 1;
             }
         }
     }
@@ -125,7 +127,7 @@ function wallAffect(dir, wl) {
         case "up":
             {
                 pointer = sheep.y;
-                wl.sort((a, b) => a.y - b.y)
+                wl.sort((a, b) => a.y - b.y);
                 for (var j = wl.length - 1; j >= 0; j--) {
                     if (pointer - wl[j].y == 20) {
                         wallToMove.push(wl[j]);
@@ -137,7 +139,7 @@ function wallAffect(dir, wl) {
         case "down":
             {
                 pointer = sheep.y;
-                wl.sort((a, b) => a.y - b.y)
+                wl.sort((a, b) => a.y - b.y);
                 for (var j = 0; j < wl.length; j++) {
                     if (wl[j].y - pointer == 20) {
                         wallToMove.push(wl[j]);
@@ -179,49 +181,48 @@ function sheepMove(e) {
         moveBlocks;
 
     function isWolfInTheWay(direction) {
-        let len = moveBlocks.length 
+        let len = moveBlocks.length;
         if (len === 0) return false;
 
-        let lastBlock = moveBlocks[len - 1]
+        let lastBlock = moveBlocks[len - 1];
         if (direction === 'up') {
-            return lastBlock.x === wolf.x && lastBlock.y - 20 === wolf.y 
+            return lastBlock.x === wolf.x && lastBlock.y - 20 === wolf.y;
         }
         if (direction === 'down') {
-            return lastBlock.x === wolf.x && lastBlock.y + 20 === wolf.y 
+            return lastBlock.x === wolf.x && lastBlock.y + 20 === wolf.y;
         }
         if (direction === 'left') {
-            return lastBlock.y === wolf.y && lastBlock.x - 20 === wolf.x
+            return lastBlock.y === wolf.y && lastBlock.x - 20 === wolf.x;
         }
         if (direction === 'right') {
-            console.log(lastBlock.y === wolf.y && lastBlock.x + 20 === wolf.x)
-            return lastBlock.y === wolf.y && lastBlock.x + 20 === wolf.x
+            return lastBlock.y === wolf.y && lastBlock.x + 20 === wolf.x;
         }
     }
 
     if (keyID === 38 || keyID === 87) { // up arrow and W
-        if (sheep.y === 0) return
+        if (sheep.y === 0) return;
         moveBlocks = wallAffect('up');
         if (moveBlocks.every(e => e.y > 0) && !isWolfInTheWay('up')) {
-            moveBlocks.forEach(function(ele) { ele.y -= 20 });
+            moveBlocks.forEach(ele => ele.y -= 20);
             sheep.y = sheep.y - 20;
             e.preventDefault();
         }
     }
     if (keyID === 39 || keyID === 68) { // right arrow and D
-        if (sheep.x === 480) return
+        if (sheep.x === 480) return;
         moveBlocks = wallAffect('right');
         if (moveBlocks.every(e => e.x < can.width - 20) && !isWolfInTheWay('right')) {
-            moveBlocks.forEach(function(ele) { ele.x += 20 });
+            moveBlocks.forEach(ele => ele.x += 20);
             sheep.x = sheep.x + 20;
             e.preventDefault();
         }
     }
     if (keyID === 40 || keyID === 83) { // down arrow and S
-        if (sheep.y === 480) return
+        if (sheep.y === 480) return;
         moveBlocks = wallAffect('down');
         if (moveBlocks.every(e => e.y < can.height - 20) && !isWolfInTheWay('down')) {
             moveBlocks.forEach(function(ele) {
-                ele.y += 20
+                ele.y += 20;
             });
             sheep.y = sheep.y + 20;
             e.preventDefault();
@@ -229,7 +230,7 @@ function sheepMove(e) {
     }
     if (keyID === 37 || keyID === 65) { // left arrow and A
         
-        if (sheep.x === 0) return
+        if (sheep.x === 0) return;
         moveBlocks = wallAffect('left');
         if (moveBlocks.every(e => e.x > 0) && !isWolfInTheWay('left')) {
             moveBlocks.forEach(function(ele) {
@@ -239,8 +240,8 @@ function sheepMove(e) {
             e.preventDefault();
         }
     }
-    gridData = Array(25).fill().map( () => Array(25).fill(0));
-    walls.forEach(w => gridData[w.y / 20][w.x / 20] = 1)
+    window.gridData = Array(25).fill().map( () => Array(25).fill(0));
+    walls.forEach(w => window.gridData[w.y / 20][w.x / 20] = 1);
     wolves.forEach(wolf => wolf.path = null);
 }
 
@@ -252,7 +253,7 @@ function loop() {
         wolf.move();
         wolf.draw();
     });
-    !gameOver && requestAnimationFrame(loop);
+    !window.gameOver && requestAnimationFrame(loop);
 }
 
 function main() {

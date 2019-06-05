@@ -1,4 +1,4 @@
-// source: https://codepen.io/clindsey/pen/yNvYxE
+// 参考: https://codepen.io/clindsey/pen/yNvYxE
 var Pathfinder;
 
 Pathfinder = (function() {
@@ -44,7 +44,7 @@ Pathfinder = (function() {
     this.closeNode(x, y);
     this.addNeighbors(x, y);
     this.isFoundFinished = false;
-    while(!this.isFinished) {
+    while (!this.isFinished) {
       this.nextStep();
     }
   };
@@ -52,7 +52,7 @@ Pathfinder = (function() {
   Pathfinder.prototype.nextStep = function() {
     var x, y, _ref;
     if (this.open.length === 0) {
-      this.isFinished = true
+      this.isFinished = true;
       return;
     }
     _ref = this.iToC(this.open.shift()), x = _ref[0], y = _ref[1];
@@ -71,7 +71,7 @@ Pathfinder = (function() {
   // 访问到这个节点
   Pathfinder.prototype.addOpen = function(x, y, nodeIndex) {
     var index, node, tX, tY, _ref;
-    if(x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) return
+    if(x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) return;
     index = this.cToI(x, y);
     // console.log(x, y)
     node = this.data[index];
@@ -102,6 +102,7 @@ Pathfinder = (function() {
     this.solutionPath = [];
     this.solutionPath.push(this.targetPosition);
     _results = [];
+
     while (this.walkSolution()) {
       _results.push(true);
     }
@@ -116,16 +117,23 @@ Pathfinder = (function() {
   };
 
   Pathfinder.prototype.walkSolution = function() {
-    var lastNode, nextNode, x, y, _ref;
-    _ref = this.solutionPath[this.solutionPath.length - 1], x = _ref[0], y = _ref[1];
+    var lastNode, nextNode, _ref;
+    _ref = this.solutionPath[this.solutionPath.length - 1];
+    let [x, y] = _ref;
     lastNode = this.data[this.cToI(x, y)];
-    nextNode = this.data[lastNode.fromIndex];
-    this.solutionPath.push([nextNode.x, nextNode.y]);
-    if (!nextNode.fromIndex) {
-      this.isFinished = true;
-      this.pathFound();
-      return false;
+    try { 
+      nextNode = this.data[lastNode.fromIndex];
+      this.solutionPath.push([nextNode.x, nextNode.y]);
+      if (!nextNode.fromIndex) {
+        this.isFinished = true;
+        this.pathFound();
+        return false;
+      }
+    } catch(err) {
+      throw(err);
     }
+
+    // console.log(nextNode.index);
     return true;
   };
 
@@ -172,3 +180,5 @@ Pathfinder = (function() {
   return Pathfinder;
 
 })();
+
+module.exports =  Pathfinder;
