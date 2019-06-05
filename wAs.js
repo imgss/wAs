@@ -2,35 +2,16 @@
  * Created by gg on 2016/9/7.
  */
 let walls = [],
-    sheep = { x: 240, y: 240 },
-    wolf = { x: 0, y: 0, size: 10, direction: { x: 1, y: 1 } };
-let can = document.getElementById('map'), context = can.getContext('2d'),
+    sheep = { x: 240, y: 240 };
+let can = document.getElementById('game'), 
+    context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
 const GRID_NUM = 25;
 const CELL_W = 20;
 let gameOver = false;
-
+let wolf = new Wolf(0, 0);
 let gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
-class Steps {
-    constructor() {
-        this.stack = [];
-    }
-    addStep(step) {
-        this.stack.push(step);
-    }
-    back() {
-        let step = this.stack.pop()
-        console.log(step)
-    }
-}
-//function..................................................
-function windowToCanvas(x, y) {
-    var bbox = canvas.getBoundingClientRect();
-    return {
-        x: x - bbox.left * (canvas.width / bbox.width),
-        y: y - bbox.top * (canvas.height / bbox.height)
-    };
-}
+
 // 画网格
 function drawGrid(color, stepx, stepy) {
     ctx.save();
@@ -96,6 +77,7 @@ function sheepDraw() {
     context.fill();
     context.restore();
 }
+
 //墙的运动
 function wallLine(direction) { //选出羊上面的砖块
     var wallLine = [];
@@ -152,7 +134,6 @@ function wallAffect(dir, wl) {
             break;
         case "down":
             {
-                //if(can.height-wl[wl.length-1].y < 20) return false;//顶到墙了
                 pointer = sheep.y;
                 wl.sort((a, b) => a.y - b.y)
                 for (var j = 0; j < wl.length; j++) {
@@ -194,11 +175,31 @@ function wallAffect(dir, wl) {
 function sheepMove(e) {
     var keyID = e.keyCode ? e.keyCode : e.which,
         moveBlocks;
-    console.log(sheep);
+
+    function isWolfInTheWay(direction) {
+        let len = moveBlocks.length 
+        if (len === 0) return false;
+
+        let lastBlock = moveBlocks[len - 1]
+        if (direction === 'up') {
+            return lastBlock.x === wolf.x && lastBlock.y - 20 === wolf.y 
+        }
+        if (direction === 'down') {
+            return lastBlock.x === wolf.x && lastBlock.y + 20 === wolf.y 
+        }
+        if (direction === 'left') {
+            return lastBlock.y === wolf.y && lastBlock.x - 20 === wolf.x
+        }
+        if (direction === 'right') {
+            console.log(lastBlock.y === wolf.y && lastBlock.x + 20 === wolf.x)
+            return lastBlock.y === wolf.y && lastBlock.x + 20 === wolf.x
+        }
+    }
+
     if (keyID === 38 || keyID === 87) { // up arrow and W
         if (sheep.y === 0) return
         moveBlocks = wallAffect('up');
-        if (moveBlocks.every(function(e) { return e.y > 0; })) {
+        if (moveBlocks.every(e => e.y > 0) && !isWolfInTheWay('up')) {
             moveBlocks.forEach(function(ele) { ele.y -= 20 });
             sheep.y = sheep.y - 20;
             e.preventDefault();
@@ -207,7 +208,7 @@ function sheepMove(e) {
     if (keyID === 39 || keyID === 68) { // right arrow and D
         if (sheep.x === 480) return
         moveBlocks = wallAffect('right');
-        if (moveBlocks.every(function(e) { return e.x < can.width - 20; })) {
+        if (moveBlocks.every(e => e.x < can.width - 20) && !isWolfInTheWay('right')) {
             moveBlocks.forEach(function(ele) { ele.x += 20 });
             sheep.x = sheep.x + 20;
             e.preventDefault();
@@ -216,7 +217,7 @@ function sheepMove(e) {
     if (keyID === 40 || keyID === 83) { // down arrow and S
         if (sheep.y === 480) return
         moveBlocks = wallAffect('down');
-        if (moveBlocks.every(function(e) { return e.y < can.height - 20; })) {
+        if (moveBlocks.every(e => e.y < can.height - 20) && !isWolfInTheWay('down')) {
             moveBlocks.forEach(function(ele) {
                 ele.y += 20
             });
@@ -228,7 +229,7 @@ function sheepMove(e) {
         
         if (sheep.x === 0) return
         moveBlocks = wallAffect('left');
-        if (moveBlocks.every(e => e.x > 0)) {
+        if (moveBlocks.every(e => e.x > 0) && !isWolfInTheWay('left')) {
             moveBlocks.forEach(function(ele) {
                 ele.x -= 20;
             });
@@ -240,67 +241,22 @@ function sheepMove(e) {
     walls.forEach(w => gridData[w.y / 20][w.x / 20] = 1)
     wolf.path = null;
 }
-//狼的绘制和运动代码
-wolf.draw = function() {
-    context.save();
-    context.fillStyle = "#39A234";
-    context.beginPath();
-    var p0x = wolf.x + 10;
-    var p0y = wolf.y + 10;
-    var size = wolf.size;
-    context.moveTo(p0x + size, p0y);
-    for (var i = 1; i < 6; i++) {
-        context.lineTo(p0x + size * Math.cos(Math.PI / 3 * i), p0y - size * Math.sin(Math.PI / 3 * i));
-    }
-    context.closePath();
-    context.fill();
-    context.restore();
-}
 
-wolf.move = (function() {
-    let timeStemp = Date.now();
-
-    return function() {
-        let now = Date.now()
-        if (now - timeStemp < 500) return;
-        timeStemp = now;
-        if (sameLocation(wolf, sheep)) {
-            alert('你被抓住了');
-            gameOver = true;
-            return;
-        }
-        if (!wolf.path) {
-            let pathFinder = new Pathfinder(gridData, [(sheep.x)/20, (sheep.y)/20]);
-            pathFinder.beginFill(wolf);
-            if (pathFinder.path) {
-                wolf.path = pathFinder.path;
-            }
-        }
-        if (wolf.path) {
-            wolf.size = 10;
-            let point = wolf.path.shift();
-            if (point) {
-                wolf.x = point[0] * 20;
-                wolf.y = point[1] * 20;
-            } else {
-                wolf.path = null;
-            }
-        } else {
-            wolf.size = wolf.size === 10 ? 12 : 10;
-        }
-    }
-})();
-
-function draw() {
+function loop() {
     context.clearRect(0, 0, can.width, can.height);
-    wolf.move();
     wallsDraw();
     sheepDraw();
+    wolf.move();
     wolf.draw();
-    !gameOver && requestAnimationFrame(draw);
+    !gameOver && requestAnimationFrame(loop);
 }
-wallsInit();
-draw();
-drawGrid('rgba(100,100,100,0.3)', can.width / GRID_NUM, can.height / GRID_NUM);
-can.addEventListener('keydown', sheepMove);
-document.addEventListener('keydown', sheepMove);
+
+function main() {
+    wallsInit();
+    drawGrid('rgba(100,100,100,0.3)', can.width / GRID_NUM, can.height / GRID_NUM);
+    // can.addEventListener('keydown', sheepMove);
+    document.addEventListener('keydown', sheepMove);
+    loop();
+}
+
+main();
