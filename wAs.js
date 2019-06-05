@@ -241,7 +241,7 @@ function sheepMove(e) {
     }
     gridData = Array(25).fill().map( () => Array(25).fill(0));
     walls.forEach(w => gridData[w.y / 20][w.x / 20] = 1)
-    wolf.path = null;
+    wolves.forEach(wolf => wolf.path = null);
 }
 
 function loop() {

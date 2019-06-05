@@ -37,7 +37,9 @@ class Wolf{
         }
         if (!this.path) {
             let pathFinder = new Pathfinder(gridData, [(sheep.x)/20, (sheep.y)/20]);
+            console.time('finding')
             pathFinder.beginFill(this);
+            console.timeEnd('finding')
             if (pathFinder.path) {
                 this.path = pathFinder.path;
             }

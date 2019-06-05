@@ -25,7 +25,7 @@ Pathfinder = (function() {
         node = {
           open: !cell, // 是不是墙
           visited: false,
-          index: 0,
+          index: index,
           x: x,
           y: y
         };
@@ -78,7 +78,7 @@ Pathfinder = (function() {
     // console.log(node)
     if (node.open) {
       this.open.push(index);
-      node.index = nodeIndex + 1;
+      node.fromIndex = nodeIndex;
       node.open = false;
       node.visited = true;
       this.visitedCallback && this.visitedCallback(x, y, node.index);
@@ -119,10 +119,9 @@ Pathfinder = (function() {
     var lastNode, nextNode, x, y, _ref;
     _ref = this.solutionPath[this.solutionPath.length - 1], x = _ref[0], y = _ref[1];
     lastNode = this.data[this.cToI(x, y)];
-    nextNode = this.findLowestNeighbor(lastNode.x, lastNode.y);
+    nextNode = this.data[lastNode.fromIndex];
     this.solutionPath.push([nextNode.x, nextNode.y]);
-    if (nextNode.index === 1) {
-      this.solutionPath.push(this.startPosition);
+    if (!nextNode.fromIndex) {
       this.isFinished = true;
       this.pathFound();
       return false;
