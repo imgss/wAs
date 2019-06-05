@@ -2,7 +2,8 @@
  * Created by gg on 2016/9/7.
  */
 let walls = [],
-    sheep = { x: 240, y: 240 };
+    wolves = [],
+    sheep = { x: 480, y: 480 };
 let can = document.getElementById('game'), 
     context = can.getContext('2d'),
     ctx = document.getElementById('bg').getContext('2d');
@@ -10,6 +11,7 @@ const GRID_NUM = 25;
 const CELL_W = 20;
 let gameOver = false;
 let wolf = new Wolf(0, 0);
+wolves.push(wolf);
 let gridData = Array(GRID_NUM).fill().map( () => Array(GRID_NUM).fill(0));
 
 // 画网格
@@ -246,8 +248,10 @@ function loop() {
     context.clearRect(0, 0, can.width, can.height);
     wallsDraw();
     sheepDraw();
-    wolf.move();
-    wolf.draw();
+    wolves.forEach(wolf => {
+        wolf.move();
+        wolf.draw();
+    });
     !gameOver && requestAnimationFrame(loop);
 }
 
