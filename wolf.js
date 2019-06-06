@@ -3,10 +3,14 @@ import Pathfinder from './search';
 function sameLocation(a, b) {
   return a.x === b.x && a.y === b.y;
 }
+function rand(min, max) {
+  return min + Math.floor((max-min) * Math.random());
+}
 class Wolf{
   constructor(x = 0, y = 0, size = 10) {
     this.x = x;
     this.y = y;
+    this.speed = rand(2, 5);
     this.size = size;
     this.isCallHelped = false;
     this.stuck = 0;
@@ -33,7 +37,7 @@ class Wolf{
 
   move() {
       let now = Date.now();
-      if (now - this._timeStamp < 500) return;
+      if (now - this._timeStamp < 1000 / this.speed) return;
       this._timeStamp = now;
       if (sameLocation(this, window.sheep)) {
           alert('你被抓住了');
