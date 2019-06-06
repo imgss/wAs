@@ -6,6 +6,7 @@ function sameLocation(a, b) {
 function rand(min, max) {
   return min + Math.floor((max-min) * Math.random());
 }
+let wolfImg = document.getElementById('wolf-img');
 class Wolf{
   constructor(x = 0, y = 0, size = 10) {
     this.x = x;
@@ -21,17 +22,18 @@ class Wolf{
   draw() {
     let context = window.context;
     context.save();
-    context.fillStyle = "#39A234";
-    context.beginPath();
-    var p0x = this.x + 10;
-    var p0y = this.y + 10;
-    var size = this.size;
-    context.moveTo(p0x + size, p0y);
-    for (var i = 1; i < 6; i++) {
-        context.lineTo(p0x + size * Math.cos(Math.PI / 3 * i), p0y - size * Math.sin(Math.PI / 3 * i));
-    }
-    context.closePath();
-    context.fill();
+    context.drawImage(wolfImg, this.x, this.y, this.size * 2, this.size * 2);
+    // context.fillStyle = "#39A234";
+    // context.beginPath();
+    // var p0x = this.x + 10;
+    // var p0y = this.y + 10;
+    // var size = this.size;
+    // context.moveTo(p0x + size, p0y);
+    // for (var i = 1; i < 6; i++) {
+    //     context.lineTo(p0x + size * Math.cos(Math.PI / 3 * i), p0y - size * Math.sin(Math.PI / 3 * i));
+    // }
+    // context.closePath();
+    // context.fill();
     context.restore();
   }
 
@@ -74,14 +76,21 @@ class Wolf{
 
   static callHelp() {
     if (Wolf.wolves.length > 3) {
+      alert('you win!!');
       return;
     }
     // TODO: 利用pathFinder，优化狼出现的位置
     let pf = new Pathfinder(window.gridData, [0,0]);
     let {x, y} = window.sheep;
+    let wolf;
     pf.findSteps([x / 20, y / 20], 8);
     let targetPoint = pf.data[pf.open.pop()];
-    Wolf.wolves.push(new Wolf(targetPoint.x * 20 || 480, targetPoint.y * 20 || 0));
+    if (!targetPoint) {
+      pf.findSteps([x / 20, y / 20], 2);
+      targetPoint = pf.data[pf.open.pop()];
+    }
+    wolf = new Wolf(targetPoint.x * 20, targetPoint.y * 20);
+    Wolf.wolves.push(wolf);
   }
 
 }

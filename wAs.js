@@ -50,6 +50,7 @@ class Block{
     draw() {
         context.save();
         context.fillRect(this.x + 1, this.y + 1, 19, 19);
+        // context.drawImage(brickImg, this.x, this.y, 20, 20);
         context.restore();
     }
 }
@@ -73,14 +74,15 @@ function wallsDraw() {
     });
 }
 //画出羊
-function sheepDraw() { 
+sheep.draw = function() { 
     context.save();
     context.fillStyle = '#823f29';
-    context.beginPath();
-    context.arc(sheep.x + 10, sheep.y + 10, 10, 0, Math.PI * 2);
-    context.fill();
+    context.drawImage(sheepImg, this.x, this.y, 20, 20);
+    // context.beginPath();
+    // context.arc(sheep.x + 10, sheep.y + 10, 10, 0, Math.PI * 2);
+    // context.fill();
     context.restore();
-}
+};
 
 //墙的运动
 function wallLine(direction) { //选出羊上面的砖块
@@ -248,7 +250,7 @@ function sheepMove(e) {
 function loop() {
     context.clearRect(0, 0, can.width, can.height);
     wallsDraw();
-    sheepDraw();
+    sheep.draw();
     wolves.forEach(wolf => {
         wolf.move();
         wolf.draw();
@@ -259,9 +261,17 @@ function loop() {
 function main() {
     wallsInit();
     drawGrid('rgba(100,100,100,0.3)', can.width / GRID_NUM, can.height / GRID_NUM);
-    // can.addEventListener('keydown', sheepMove);
     document.addEventListener('keydown', sheepMove);
     loop();
 }
-
-main();
+let brickImg = document.getElementById('brick-img');
+let wolfImg = document.getElementById('wolf-img');
+let sheepImg = document.getElementById('sheep-img');
+let promiseArr = [sheepImg, wolfImg]
+    .map(el => new Promise(function(resolve, reject){
+        el.onload = function() {console.log('load', el); resolve();};
+    }));
+Promise.all(promiseArr).then((v) => {
+    console.log(v);
+    main();
+}).catch(err => console.log(err));

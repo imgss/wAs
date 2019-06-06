@@ -56,7 +56,6 @@ Pathfinder = (function() {
     this.closeNode(x, y);
     this.addNeighbors(x, y);
     while (step--) {
-      console.log({step})
       this.nextStep();
     }
   };
