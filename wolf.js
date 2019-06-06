@@ -77,7 +77,11 @@ class Wolf{
       return;
     }
     // TODO: 利用pathFinder，优化狼出现的位置
-    Wolf.wolves.push(new Wolf(480, 0));
+    let pf = new Pathfinder(window.gridData, [0,0]);
+    let {x, y} = window.sheep;
+    pf.findSteps([x / 20, y / 20], 8);
+    let targetPoint = pf.data[pf.open.pop()];
+    Wolf.wolves.push(new Wolf(targetPoint.x * 20 || 480, targetPoint.y * 20 || 0));
   }
 
 }

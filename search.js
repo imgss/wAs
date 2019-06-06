@@ -1,13 +1,10 @@
 // 参考: https://codepen.io/clindsey/pen/yNvYxE
 var Pathfinder;
-
 Pathfinder = (function() {
-  let isFinding = false;
-  function Pathfinder(gridData, targetPosition, foundCallback, fillCallback, visitedCallback) {
+  function Pathfinder(gridData, targetPosition, foundCallback) {
     this.gridData = gridData;
     this.targetPosition = targetPosition;
-    this.fillCallback = fillCallback;
-    this.visitedCallback = visitedCallback;
+
     this.foundCallback = foundCallback;
     this.width = this.gridData[0].length;
     this.height = this.gridData.length;
@@ -43,8 +40,23 @@ Pathfinder = (function() {
     this.reset();
     this.closeNode(x, y);
     this.addNeighbors(x, y);
-    this.isFoundFinished = false;
     while (!this.isFinished) {
+      this.nextStep();
+    }
+  };
+  /**
+   * @description 找出距startPosition节点step范围内的一个可用节点
+   * @return [x,y]
+   */
+  Pathfinder.prototype.findSteps = function(startPosition, step) {
+    console.log(startPosition);
+    let [x, y] = startPosition;
+    this.startPosition = startPosition;
+    this.reset();
+    this.closeNode(x, y);
+    this.addNeighbors(x, y);
+    while (step--) {
+      console.log({step})
       this.nextStep();
     }
   };
@@ -81,19 +93,22 @@ Pathfinder = (function() {
       node.fromIndex = nodeIndex;
       node.open = false;
       node.visited = true;
-      this.visitedCallback && this.visitedCallback(x, y, node.index);
     }
     _ref = this.targetPosition, tX = _ref[0], tY = _ref[1];
     if (x === tX && y === tY) {
       return this.targetFound();
     }
   };
-  // 这个节点上下左右都走不通
+
   Pathfinder.prototype.closeNode = function(x, y) {
     var node;
     node = this.data[this.cToI(x, y)];
-    node.open = false;
-    this.fillCallback && this.fillCallback(x, y, node.index);
+    try {
+      node.open = false;
+    } catch (err) {
+      console.log(x, y);
+    }
+
   };
 
   Pathfinder.prototype.targetFound = function() {
@@ -180,5 +195,5 @@ Pathfinder = (function() {
   return Pathfinder;
 
 })();
-
+console.log(Pathfinder);
 module.exports =  Pathfinder;
