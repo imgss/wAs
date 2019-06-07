@@ -7,6 +7,7 @@ let can = document.getElementById("game"),
   can2 = document.getElementById("bg"),
   ctx = can2.getContext("2d");
 const GRID_NUM = 25; // 20 25
+
 let CELL_W;
 
 let walls = [],

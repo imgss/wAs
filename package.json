@@ -1119,7 +1119,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel index.html"
+    "dev": "parcel index.html",
+    "build": "parcel build index.html -d /Users/imgss/Documents/code/imgss.github.io/demo/wAs --public-url /demo/wAs"
   },
   "repository": {
     "type": "git",

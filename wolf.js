@@ -71,7 +71,8 @@ class Wolf{
               '你等着，我叫人去',
               '我大哥来了你就死定了',
               '我们老大马上就到',
-              '你还真有两下子'
+              '额，是个狠人',
+              '大大大大，大哥别杀我~'
             ];
             msg('wolf', msgs[Wolf.wolves.length-1]);
           }
@@ -84,7 +85,7 @@ class Wolf{
   }
 
   static callHelp() {
-    if (Wolf.wolves.length > 3) {
+    if (Wolf.wolves.length > 4) {
       msg('sheep', '我们赢了！');
       return;
     }
