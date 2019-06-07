@@ -2,14 +2,66 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=0.8,user-scalable=0">
     <title>狼吃羊</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
         body{
             margin: 0;
             padding: 0;
         }
+        .keyboard{
+            display: none;
+            margin:0 auto;
+            flex-wrap:wrap;
+        }
+        .container{
+            position:relative;
+            margin: 0 auto;
+            width:500px
+        }
+        @media screen and (max-width:500px) {
+            .container{
+                width: 100vw;
+            }
+            .keyboard{
+                display: block;
+                position: relative;
+                width: 240px;
+                height: 240px;
+            }
+        }
+        .keyboard>div{
+            /* background: #2e2e2e; */
+            position: absolute;
+            color: #fff;
+            min-width:33.3%;
+            left: 0;
+            top: 0;
+            text-align: center;
+            line-height: 80px;
+            font-size: 80px;
+            height: 80px;
+            margin-top:10px;
+        }
+        #up{
+            top: 0px;
+            left: 80px;
+        }
+        #down{
+            top: 170px;
+            left: 80px;
+        }
+        #left{
+            top: 80px;
+            left: -10px;
+        }
+        #right{
+            top: 80px;
+            left: 170px;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.min.js"></script>
 </head>
 <body>
 <div hidden>
@@ -17,8 +69,22 @@
     <img src="./img/wolf.png" id="wolf-img">
     <img src="./img/sheep.png" id="sheep-img">
 </div>
-<canvas  id="bg" width="500px" height="500px" style="border:#333 solid 1px;"></canvas>
-<canvas id="game" width="500px" height="500px" style="position: absolute;left:0;top:0; border:#333 solid 1px;"></canvas>
+<div id="message">
+    <img src="./img/wolf.png" >
+    <div>你等着，我叫人去</div>
+</div>
+<div class="container">
+    <canvas  id="bg" width="500px" height="500px" style="border:#333 solid 1px;"></canvas>
+    <canvas id="game" width="500px" height="500px" style="position: absolute;left:0;top:0; border:#333 solid 1px;"></canvas>        
+</div>
+<div class="keyboard" hidden>
+    <div id="up">⬆️</div>
+    <div id="left">⬅️</div>
+    <div id="down">⬇️</div>
+    <div id="right">➡️</div>
+</div>
+<div id="static" style="width:100px;height:100px"></div>
 <script src="wAs.js"></script>
+
 </body>
 </html>

@@ -34,8 +34,8 @@ Pathfinder = (function() {
 
   Pathfinder.prototype.beginFill = function(wolf) {
     let {x, y} = wolf;
-    x = x / 20;
-    y = y / 20;
+    x = x / window.CELL_W;
+    y = y / window.CELL_W;
     this.startPosition = [x, y];
     this.reset();
     this.closeNode(x, y);
@@ -49,7 +49,6 @@ Pathfinder = (function() {
    * @return [x,y]
    */
   Pathfinder.prototype.findSteps = function(startPosition, step) {
-    console.log(startPosition);
     let [x, y] = startPosition;
     this.startPosition = startPosition;
     this.reset();
@@ -105,6 +104,7 @@ Pathfinder = (function() {
     try {
       node.open = false;
     } catch (err) {
+      console.log(this);
       console.log(x, y);
     }
 
@@ -194,5 +194,4 @@ Pathfinder = (function() {
   return Pathfinder;
 
 })();
-console.log(Pathfinder);
 module.exports =  Pathfinder;

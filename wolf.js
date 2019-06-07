@@ -1,5 +1,5 @@
 import Pathfinder from './search';
-
+import msg from './message';
 function sameLocation(a, b) {
   return a.x === b.x && a.y === b.y;
 }
@@ -8,10 +8,10 @@ function rand(min, max) {
 }
 let wolfImg = document.getElementById('wolf-img');
 class Wolf{
-  constructor(x = 0, y = 0, size = 10) {
+  constructor(x = 0, y = 0, size = window.CELL_W) {
     this.x = x;
     this.y = y;
-    this.speed = rand(2, 5);
+    this.speed = Wolf.wolves.length ? rand(2, 4) : 2;
     this.size = size;
     this.isCallHelped = false;
     this.stuck = 0;
@@ -22,7 +22,7 @@ class Wolf{
   draw() {
     let context = window.context;
     context.save();
-    context.drawImage(wolfImg, this.x, this.y, this.size * 2, this.size * 2);
+    context.drawImage(wolfImg, this.x, this.y, this.size, this.size);
     // context.fillStyle = "#39A234";
     // context.beginPath();
     // var p0x = this.x + 10;
@@ -42,30 +42,39 @@ class Wolf{
       if (now - this._timeStamp < 1000 / this.speed) return;
       this._timeStamp = now;
       if (sameLocation(this, window.sheep)) {
-          alert('你被抓住了');
+          msg('wolf', '哈哈哈，你被抓住了');
           window.gameOver = true;
           return;
       }
       if (!this.path) {
           let sheep = window.sheep;
-          let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/20, (sheep.y)/20]);
+          let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/window.CELL_W, (sheep.y)/window.CELL_W]);
           pathFinder.beginFill(this);
           if (pathFinder.path) {
               this.path = pathFinder.path;
           }
       }
       if (this.path) {
-          this.size = 10;
+          this.size = window.CELL_W;
           this.stuck = 0;
           let point = this.path.shift();
           if (point) {
-              this.x = point[0] * 20;
-              this.y = point[1] * 20;
+              this.x = point[0] * window.CELL_W;
+              this.y = point[1] * window.CELL_W;
           } else {
               this.path = null;
           }
       } else {
-          this.size = this.size === 10 ? 12 : 10;
+          this.size = this.size === window.CELL_W ? window.CELL_W * 1.2 : window.CELL_W;
+          if (this.stuck === 1) {
+            let msgs = [
+              '你等着，我叫人去',
+              '我大哥来了你就死定了',
+              '我们老大马上就到',
+              '你还真有两下子'
+            ];
+            msg('wolf', msgs[Wolf.wolves.length-1]);
+          }
           this.stuck++;
           if (this.stuck > 6 && !this.isCallHelped) {
             Wolf.callHelp();
@@ -76,23 +85,22 @@ class Wolf{
 
   static callHelp() {
     if (Wolf.wolves.length > 3) {
-      alert('you win!!');
+      msg('sheep', '我们赢了！');
       return;
     }
     // TODO: 利用pathFinder，优化狼出现的位置
     let pf = new Pathfinder(window.gridData, [0,0]);
     let {x, y} = window.sheep;
     let wolf;
-    pf.findSteps([x / 20, y / 20], 8);
+    pf.findSteps([x / window.CELL_W, y / window.CELL_W], 8);
     let targetPoint = pf.data[pf.open.pop()];
     if (!targetPoint) {
-      pf.findSteps([x / 20, y / 20], 2);
+      pf.findSteps([x / window.CELL_W, y / window.CELL_W], 2);
       targetPoint = pf.data[pf.open.pop()];
     }
-    wolf = new Wolf(targetPoint.x * 20, targetPoint.y * 20);
+    wolf = new Wolf(targetPoint.x * window.CELL_W, targetPoint.y * window.CELL_W);
     Wolf.wolves.push(wolf);
   }
-
 }
 Wolf.wolves = [];
 export default Wolf;
