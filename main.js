@@ -73,7 +73,7 @@ class Block {
 function wallsInit() {
   for (var i = CELL_W * 4; i < can.width - CELL_W * 4; i += CELL_W) {
     for (var j = CELL_W * 4; j < can.width - CELL_W * 4; j += CELL_W) {
-      if (!(i > 200 && i < 280 && (j > 200 && j < 280))) {
+      if (!(i > CELL_W * 10 && i < CELL_W * 14 && (j > CELL_W * 10 && j < CELL_W * 14))) {
         //留下中间3*3个空格
         walls.push(new Block(i, j));
         window.gridData[i / CELL_W][j / CELL_W] = 1;
@@ -210,7 +210,7 @@ function sheepMove(e) {
     }
   }
 
-  function isWolfInTheWay(direction) {
+  function isWolfInTheWay(wolf, direction) {
     let len = moveBlocks.length;
     if (len === 0) return false;
 
@@ -229,11 +229,15 @@ function sheepMove(e) {
     }
   }
 
+  function isWolvesInTheWay(direction) {
+    return Wolf.wolves.some(wolf => isWolfInTheWay(wolf, direction));
+  }
+
   if (direction === "up") {
     // up arrow and W
     if (sheep.y === 0) return;
     moveBlocks = wallAffect("up");
-    if (moveBlocks.every(e => e.y > 0) && !isWolfInTheWay("up")) {
+    if (moveBlocks.every(e => e.y > 0) && !isWolvesInTheWay("up")) {
       moveBlocks.forEach(ele => (ele.y -= CELL_W));
       sheep.y = sheep.y - CELL_W;
     }
@@ -243,7 +247,7 @@ function sheepMove(e) {
     if (sheep.x === can.width - CELL_W) return;
     if (
       moveBlocks.every(e => e.x < can.width - CELL_W) &&
-      !isWolfInTheWay("right")
+      !isWolvesInTheWay("right")
     ) {
       moveBlocks.forEach(ele => (ele.x += CELL_W));
       sheep.x = sheep.x + CELL_W;
@@ -254,7 +258,7 @@ function sheepMove(e) {
     if (sheep.y === can.width - CELL_W) return;
     if (
       moveBlocks.every(e => e.y < can.height - CELL_W) &&
-      !isWolfInTheWay("down")
+      !isWolvesInTheWay("down")
     ) {
       moveBlocks.forEach(function(ele) {
         ele.y += CELL_W;
@@ -266,7 +270,7 @@ function sheepMove(e) {
     // left arrow and A
 
     if (sheep.x === 0) return;
-    if (moveBlocks.every(e => e.x > 0) && !isWolfInTheWay("left")) {
+    if (moveBlocks.every(e => e.x > 0) && !isWolvesInTheWay("left")) {
       moveBlocks.forEach(function(ele) {
         ele.x -= CELL_W;
       });
