@@ -1,4 +1,7 @@
 # wAs
+
+试玩地址: https://www.imgss.top/demo/wAs/
+
 一个益智小游戏，有3个角色：
 
 狼： 可以吃羊
