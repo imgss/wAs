@@ -187,6 +187,7 @@ function wallAffect(dir, wl) {
 
 function sheepMove(e) {
   let direction, moveBlocks;
+  let audio = document.getElementById('fail');
   if (typeof e === "string") {
     direction = e;
   } else {
@@ -195,6 +196,7 @@ function sheepMove(e) {
     direction = getDirection(keyID);
   }
   moveBlocks = wallAffect(direction);
+  // 获得羊的方向
   function getDirection(keyID) {
     if (keyID === 38 || keyID === 87) {
       return "up";
@@ -209,7 +211,7 @@ function sheepMove(e) {
       return "left";
     }
   }
-
+  //判断移动的方向上是不是有狼
   function isWolfInTheWay(wolf, direction) {
     let len = moveBlocks.length;
     if (len === 0) return false;
@@ -240,6 +242,8 @@ function sheepMove(e) {
     if (moveBlocks.every(e => e.y > 0) && !isWolvesInTheWay("up")) {
       moveBlocks.forEach(ele => (ele.y -= CELL_W));
       sheep.y = sheep.y - CELL_W;
+    } else {
+      audio.play();
     }
   }
   if (direction === "right") {
@@ -251,6 +255,8 @@ function sheepMove(e) {
     ) {
       moveBlocks.forEach(ele => (ele.x += CELL_W));
       sheep.x = sheep.x + CELL_W;
+    } else {
+      audio.play();
     }
   }
   if (direction === "down") {
@@ -264,17 +270,20 @@ function sheepMove(e) {
         ele.y += CELL_W;
       });
       sheep.y = sheep.y + CELL_W;
+    } else {
+      audio.play();
     }
   }
   if (direction === "left") {
     // left arrow and A
-
     if (sheep.x === 0) return;
     if (moveBlocks.every(e => e.x > 0) && !isWolvesInTheWay("left")) {
       moveBlocks.forEach(function(ele) {
         ele.x -= CELL_W;
       });
       sheep.x = sheep.x - CELL_W;
+    } else {
+      audio.play();
     }
   }
   window.gridData = Array(GRID_NUM)
