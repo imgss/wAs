@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=0.8,user-scalable=0">
     <title>狼吃羊</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.min.js"></script> -->
     <script type="text/javascript" src="https://tajs.qq.com/stats?sId=66436971" charset="UTF-8"></script>
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -37,13 +38,15 @@
             .keyboard{
                 display: block;
                 position: relative;
-                width: 240px;
+                width: 100vw;
                 height: 240px;
             }
         }
         .keyboard>div{
             /* background: #2e2e2e; */
-            position: absolute;
+            text-align: center;
+            display: flex;
+            justify-content: center;
             color: #fff;
             min-width:33.3%;
             left: 0;
@@ -54,21 +57,8 @@
             height: 80px;
             margin-top:10px;
         }
-        #up{
-            top: -10px;
-            left: 80px;
-        }
-        #down{
-            top: 170px;
-            left: 80px;
-        }
-        #left{
-            top: 80px;
-            left: -10px;
-        }
-        #right{
-            top: 80px;
-            left: 170px;
+        #left,#right{
+            flex: 1;
         }
     </style>
 </head>
@@ -88,10 +78,14 @@
 </div>
 <div class="keyboard" hidden>
     <div id="up">⬆️</div>
-    <div id="left">⬅️</div>
+    <div>
+        <div id="left">⬅️</div>
+        <div style="width:80px"></div>
+        <div id="right">➡️</div>
+    </div>
     <div id="down">⬇️</div>
-    <div id="right">➡️</div>
 </div>
+
 <div id="static" style="width:100px;height:100px"></div>
 <audio src="./media/fail.mp3" id="fail"></audio>
 <div style="text-align: center;position:fixed;bottom:0;width:100%;color:#9b9b9b;margin-bottom: 10px">

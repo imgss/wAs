@@ -352,7 +352,7 @@ function main() {
   //     clearInterval(timer);
   //     timer = setInterval(function() {
   //       sheepMove(data.direction.angle);
-  //     }, 100);
+  //     }, 200);
   //   });
   //   gamepad.on("end", function() {
   //     clearInterval(timer);
