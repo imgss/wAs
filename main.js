@@ -188,6 +188,7 @@ function wallAffect(dir, wl) {
 function sheepMove(e) {
   let direction, moveBlocks;
   let audio = document.getElementById('fail');
+  HTMLAudioElement.prototype.stop = function() { this.pause(); this.currentTime = 0.0;};
   if (typeof e === "string") {
     direction = e;
   } else {
@@ -243,6 +244,7 @@ function sheepMove(e) {
       moveBlocks.forEach(ele => (ele.y -= CELL_W));
       sheep.y = sheep.y - CELL_W;
     } else {
+      audio.stop();
       audio.play();
     }
   }
@@ -256,6 +258,7 @@ function sheepMove(e) {
       moveBlocks.forEach(ele => (ele.x += CELL_W));
       sheep.x = sheep.x + CELL_W;
     } else {
+      audio.stop();
       audio.play();
     }
   }
@@ -271,6 +274,7 @@ function sheepMove(e) {
       });
       sheep.y = sheep.y + CELL_W;
     } else {
+      audio.stop();
       audio.play();
     }
   }
@@ -283,6 +287,7 @@ function sheepMove(e) {
       });
       sheep.x = sheep.x - CELL_W;
     } else {
+      audio.stop();
       audio.play();
     }
   }
