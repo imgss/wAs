@@ -1,7 +1,6 @@
 // 参考: https://codepen.io/clindsey/pen/yNvYxE
-var Pathfinder;
-Pathfinder = (function() {
-  function Pathfinder(gridData, targetPosition, foundCallback) {
+export default class Pathfinder{
+  constructor(gridData, targetPosition, foundCallback) {
     this.gridData = gridData;
     this.targetPosition = targetPosition;
 
@@ -10,7 +9,7 @@ Pathfinder = (function() {
     this.height = this.gridData.length;
   }
 
-  Pathfinder.prototype.parseGridData = function() {
+  parseGridData() {
     var cell, data, index, node, row, x, y, _i, _j, _len, _len1, _ref;
     data = [];
     _ref = this.gridData;
@@ -20,9 +19,9 @@ Pathfinder = (function() {
         cell = row[x];
         index = y * this.width + x;
         node = {
-          open: !cell, // 是不是墙
-          visited: false,
+          open: !cell, // 如果是墙，直接不能访问这个节点
           index: index,
+          fromIndex: null, // 当前访问的这个节点的上一个节点是谁
           x: x,
           y: y
         };
@@ -32,7 +31,7 @@ Pathfinder = (function() {
     return data;
   };
 
-  Pathfinder.prototype.beginFill = function(wolf) {
+  beginFill(wolf) {
     let {x, y} = wolf;
     x = x / window.CELL_W;
     y = y / window.CELL_W;
@@ -48,7 +47,7 @@ Pathfinder = (function() {
    * @description 找出距startPosition节点step范围内的一个可用节点
    * @return [x,y]
    */
-  Pathfinder.prototype.findSteps = function(startPosition, step) {
+  findSteps(startPosition, step) {
     let [x, y] = startPosition;
     this.startPosition = startPosition;
     this.reset();
@@ -59,7 +58,7 @@ Pathfinder = (function() {
     }
   };
 
-  Pathfinder.prototype.nextStep = function() {
+  nextStep() {
     var x, y, _ref;
     if (this.open.length === 0) {
       this.isFinished = true;
@@ -70,7 +69,7 @@ Pathfinder = (function() {
     return this.addNeighbors(x, y);
   };
 
-  Pathfinder.prototype.addNeighbors = function(x, y) {
+  addNeighbors(x, y) {
     var index;
     index = this.data[this.cToI(x, y)].index;
     this.addOpen(x + 1, y, index);
@@ -79,9 +78,9 @@ Pathfinder = (function() {
     y - 1 >= 0 && this.addOpen(x, y - 1, index);
   };
   // 访问到这个节点
-  Pathfinder.prototype.addOpen = function(x, y, nodeIndex) {
+  addOpen(x, y, nodeIndex) {
     var index, node, tX, tY, _ref;
-    if(x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) return;
+    if (x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) return;
     index = this.cToI(x, y);
     // console.log(x, y)
     node = this.data[index];
@@ -90,7 +89,6 @@ Pathfinder = (function() {
       this.open.push(index);
       node.fromIndex = nodeIndex;
       node.open = false;
-      node.visited = true;
     }
     _ref = this.targetPosition, tX = _ref[0], tY = _ref[1];
     if (x === tX && y === tY) {
@@ -98,7 +96,7 @@ Pathfinder = (function() {
     }
   };
 
-  Pathfinder.prototype.closeNode = function(x, y) {
+  closeNode(x, y) {
     var node;
     node = this.data[this.cToI(x, y)];
     try {
@@ -110,7 +108,7 @@ Pathfinder = (function() {
 
   };
 
-  Pathfinder.prototype.targetFound = function() {
+  targetFound() {
     var _results;
     this.isFinished = true;
     this.solutionPath = [];
@@ -123,14 +121,14 @@ Pathfinder = (function() {
     return _results;
   };
 
-  Pathfinder.prototype.pathFound = function() {
+  pathFound() {
     var path;
     path = this.solutionPath.reverse();
     this.path = path.slice(1);
     this.foundCallback && this.foundCallback(path);
   };
 
-  Pathfinder.prototype.walkSolution = function() {
+  walkSolution() {
     var lastNode, nextNode, _ref;
     _ref = this.solutionPath[this.solutionPath.length - 1];
     let [x, y] = _ref;
@@ -151,47 +149,23 @@ Pathfinder = (function() {
     return true;
   };
 
-  Pathfinder.prototype.findLowestNeighbor = function(x, y) {
-    var candidateNode, node;
-    candidateNode = this.data[this.cToI(x, y)];
-    node = this.data[this.cToI(x + 1, y)];
-    if (node && node.visited && node.index < candidateNode.index) {
-      candidateNode = node;
-    }
-    node = this.data[this.cToI(x - 1, y)];
-    if (node && node.visited && node.index < candidateNode.index) {
-      candidateNode = node;
-    }
-    node = this.data[this.cToI(x, y + 1)];
-    if (node && node.visited && node.index < candidateNode.index) {
-      candidateNode = node;
-    }
-    node = this.data[this.cToI(x, y - 1)];
-    if (node && node.visited && node.index < candidateNode.index) {
-      candidateNode = node;
-    }
-    return candidateNode;
-  };
-
-  Pathfinder.prototype.reset = function() {
+  reset() {
     this.open = [];
     this.data = this.parseGridData();
     this.isFinished = false;
     return ;
   };
   // 列转换成idx
-  Pathfinder.prototype.cToI = function(x, y) {
+  cToI(x, y) {
     return y * this.width + x;
   };
   // idx转换成坐标
-  Pathfinder.prototype.iToC = function(index) {
+  iToC(index) {
     var x, y;
     x = index % this.width;
     y = Math.floor(index / this.width);
     return [x, y];
   };
 
-  return Pathfinder;
-
-})();
+}
 module.exports =  Pathfinder;

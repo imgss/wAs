@@ -61,6 +61,7 @@ class Wolf{
           let sheep = window.sheep;
           let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/window.CELL_W, (sheep.y)/window.CELL_W]);
           pathFinder.beginFill(this);
+          // 找到路径
           if (pathFinder.path) {
               this.path = pathFinder.path;
           }
