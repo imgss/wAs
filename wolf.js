@@ -1,5 +1,7 @@
 import Pathfinder from './search';
 import msg from './message';
+import swal from 'sweetalert';
+
 function sameLocation(a, b) {
   return a.x === b.x && a.y === b.y;
 }
@@ -7,6 +9,7 @@ function rand(min, max) {
   return min + Math.floor((max-min) * Math.random());
 }
 let wolfImg = document.getElementById('wolf-img');
+let maxWolfs = 4;
 class Wolf{
   constructor(x = 0, y = 0, size = window.CELL_W) {
     this.x = x;
@@ -42,7 +45,15 @@ class Wolf{
       if (now - this._timeStamp < 1000 / this.speed) return;
       this._timeStamp = now;
       if (sameLocation(this, window.sheep)) {
-          msg('wolf', '哈哈哈，你被抓住了');
+          swal({
+            text: '哈哈哈，你被抓住了',
+            button: '再来一次'
+          }).then(v => {
+            console.log(v);
+            if (v) {
+              window.location.reload();
+            }
+          });
           window.gameOver = true;
           return;
       }
@@ -74,7 +85,7 @@ class Wolf{
               '额，是个狠人',
               '大大大大，大哥别杀我~'
             ];
-            msg('wolf', msgs[Wolf.wolves.length-1]);
+            msg('wolf', msgs[Wolf.wolves.length-1] || '小兄弟有两下子');
           }
           this.stuck++;
           if (this.stuck > 6 && !this.isCallHelped) {
@@ -85,8 +96,17 @@ class Wolf{
   }
 
   static callHelp() {
-    if (Wolf.wolves.length > 4) {
-      msg('sheep', '我们赢了！');
+    if (Wolf.wolves.length > maxWolfs) {
+      swal({
+        text:'you win！',
+        buttons: ['取消', '继续']
+      }).then(v => {
+        console.log(v);
+        if (v) {
+          maxWolfs = 100;
+          Wolf.callHelp();
+        }
+      });
       return;
     }
     // TODO: 利用pathFinder，优化狼出现的位置
