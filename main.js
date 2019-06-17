@@ -25,8 +25,9 @@ let sheep = {
 };
 
 window.sheep = sheep;
-
+window.pause = false;
 let gameOver = (window.gameOver = false);
+
 let wolf = new Wolf(0, 0);
 wolves.push(wolf);
 window.gridData = Array(GRID_NUM)
@@ -303,7 +304,9 @@ function loop() {
   wallsDraw();
   sheep.draw();
   wolves.forEach(wolf => {
-    wolf.move();
+    if (!window.pause) {
+      wolf.move();
+    }
     wolf.draw();
   });
   !window.gameOver && requestAnimationFrame(loop);

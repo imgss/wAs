@@ -17,6 +17,7 @@ class Wolf{
     this.speed = Wolf.wolves.length ? rand(2, 4) : 2;
     this.size = size;
     this.isCallHelped = false;
+    // 这里狼被困住的状态有问题
     this.stuck = 0;
 
     this._timeStamp = Date.now();
@@ -86,7 +87,7 @@ class Wolf{
               '额，是个狠人',
               '大大大大，大哥别杀我~'
             ];
-            msg('wolf', msgs[Wolf.wolves.length-1] || '小兄弟有两下子');
+            msg('wolf', msgs[Wolf.wolves.length-1] || '你还真有两下子');
           }
           this.stuck++;
           if (this.stuck > 6 && !this.isCallHelped) {
@@ -97,7 +98,8 @@ class Wolf{
   }
 
   static callHelp() {
-    if (Wolf.wolves.length > maxWolfs) {
+    if (Wolf.wolves.length > maxWolfs && Wolf.wolves.every(w => w.stuck)) {
+      window.pause = true;
       swal({
         text:'you win！',
         buttons: ['取消', '继续']
@@ -105,7 +107,10 @@ class Wolf{
         console.log(v);
         if (v) {
           maxWolfs = 100;
-          Wolf.callHelp();
+          setTimeout(() => {
+            window.pause = false;
+            Wolf.callHelp();
+          }, 1000);
         }
       });
       return;
