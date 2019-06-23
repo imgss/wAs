@@ -1,7 +1,7 @@
 import Pathfinder from './search';
 import msg from './message';
 import swal from 'sweetalert';
-
+import {failAlert} from './alert';
 function sameLocation(a, b) {
   return a.x === b.x && a.y === b.y;
 }
@@ -27,17 +27,6 @@ class Wolf{
     let context = window.context;
     context.save();
     context.drawImage(wolfImg, this.x, this.y, this.size, this.size);
-    // context.fillStyle = "#39A234";
-    // context.beginPath();
-    // var p0x = this.x + 10;
-    // var p0y = this.y + 10;
-    // var size = this.size;
-    // context.moveTo(p0x + size, p0y);
-    // for (var i = 1; i < 6; i++) {
-    //     context.lineTo(p0x + size * Math.cos(Math.PI / 3 * i), p0y - size * Math.sin(Math.PI / 3 * i));
-    // }
-    // context.closePath();
-    // context.fill();
     context.restore();
   }
 
@@ -46,16 +35,7 @@ class Wolf{
       if (now - this._timeStamp < 1000 / this.speed) return;
       this._timeStamp = now;
       if (sameLocation(this, window.sheep)) {
-          swal({
-            text: '哈哈哈，你被抓住了',
-            button: '再来一次'
-          }).then(v => {
-            console.log(v);
-            if (v) {
-              window.location.reload();
-            }
-          });
-          window.gameOver = true;
+          failAlert();
           return;
       }
       if (!this.path) {

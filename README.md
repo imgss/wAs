@@ -14,6 +14,12 @@
 
 墙： 。。。
 
+## install
+
+```
+npm i
+npm run dev
+```
 
 # TODO
 - [x] 墙应该推不到狼的位置

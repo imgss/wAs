@@ -2,6 +2,8 @@
  * Created by gg on 2016/9/7.
  */
 import Wolf from "./wolf";
+import {failAlert} from './alert';
+
 let can = document.getElementById("game"),
   context = can.getContext("2d"),
   can2 = document.getElementById("bg"),
@@ -185,6 +187,21 @@ function wallAffect(dir, wl) {
   }
   return wallToMove;
 }
+// 获得羊的方向
+function getDirection(keyID) {
+  if (keyID === 38 || keyID === 87) {
+    return "up";
+  }
+  if (keyID === 39 || keyID === 68) {
+    return "right";
+  }
+  if (keyID === 40 || keyID === 83) {
+    return "down";
+  }
+  if (keyID === 37 || keyID === 65) {
+    return "left";
+  }
+}
 
 function sheepMove(e) {
   let direction, moveBlocks;
@@ -198,21 +215,7 @@ function sheepMove(e) {
     direction = getDirection(keyID);
   }
   moveBlocks = wallAffect(direction);
-  // 获得羊的方向
-  function getDirection(keyID) {
-    if (keyID === 38 || keyID === 87) {
-      return "up";
-    }
-    if (keyID === 39 || keyID === 68) {
-      return "right";
-    }
-    if (keyID === 40 || keyID === 83) {
-      return "down";
-    }
-    if (keyID === 37 || keyID === 65) {
-      return "left";
-    }
-  }
+
   //判断移动的方向上是不是有狼
   function isWolfInTheWay(wolf, direction) {
     let len = moveBlocks.length;
@@ -235,6 +238,21 @@ function sheepMove(e) {
 
   function isWolvesInTheWay(direction) {
     return Wolf.wolves.some(wolf => isWolfInTheWay(wolf, direction));
+  }
+
+  function refreshData() {
+    window.gridData = Array(GRID_NUM)
+    .fill()
+    .map(() => Array(GRID_NUM).fill(0));
+    walls.forEach(w => (window.gridData[w.y / CELL_W][w.x / CELL_W] = 1));
+    for (let wolf of wolves) {
+      if (wolf.x === sheep.x && wolf.y === sheep.y) {
+        console.log('catch');
+        failAlert();
+        return;
+      }
+      wolf.path = null;
+    }
   }
 
   if (direction === "up") {
@@ -292,11 +310,9 @@ function sheepMove(e) {
       audio.play();
     }
   }
-  window.gridData = Array(GRID_NUM)
-    .fill()
-    .map(() => Array(GRID_NUM).fill(0));
-  walls.forEach(w => (window.gridData[w.y / CELL_W][w.x / CELL_W] = 1));
-  wolves.forEach(wolf => (wolf.path = null));
+
+  refreshData();
+
 }
 
 function loop() {
@@ -341,26 +357,6 @@ function main() {
     CELL_W = canvas.width / GRID_NUM;
     window.CELL_W = CELL_W;
   });
-  // 滑动操作代码
-  // if (isMobile) {
-  //   var gamepad = window.nipplejs.create({
-  //     zone: document.getElementById("static"),
-  //     mode: "static",
-  //     position: { left: "50%", top: "80%" },
-  //     color: "red"
-  //   });
-  //   let timer;
-  //   gamepad.on("dir", function(ev, data) {
-  //     console.log(data.direction.angle);
-  //     clearInterval(timer);
-  //     timer = setInterval(function() {
-  //       sheepMove(data.direction.angle);
-  //     }, 200);
-  //   });
-  //   gamepad.on("end", function() {
-  //     clearInterval(timer);
-  //   });
-  // }
 
   wallsInit();
   sheep.init();
