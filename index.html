@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
         }
+
         .btn{
             background-color: #c0392b;
             box-shadow: 0 6px #962d22;
@@ -63,13 +64,8 @@
     </style>
 </head>
 <body>
-<div hidden>
-    <img src="./img/brick.png" id="brick-img">
-    <img src="./img/wolf.png" id="wolf-img">
-    <img src="./img/sheep.png" id="sheep-img">
-</div>
 <div id="message">
-    <img src="./img/wolf.png" >
+    <img src="" />
     <div>你等着，我叫人去</div>
 </div>
 <div class="container">
@@ -87,7 +83,7 @@
 </div>
 
 <div id="static" style="width:100px;height:100px"></div>
-<audio src="./media/fail.mp3" id="fail"></audio>
+<audio src="./media/fail.wav" id="fail"></audio>
 <div style="text-align: center;position:fixed;bottom:0;width:100%;color:#9b9b9b;margin-bottom: 10px">
     玩法说明: 上下左右移动小羊，羊可以推动砖块，把狼困起来。
     <div class="btn" onclick="window.location.reload()">点我重新开始</div>

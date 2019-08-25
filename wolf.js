@@ -1,6 +1,6 @@
 import Pathfinder from './search';
 import msg from './message';
-import swal from 'sweetalert';
+import swal from './modal';
 import {failAlert} from './alert';
 function sameLocation(a, b) {
   return a.x === b.x && a.y === b.y;
@@ -8,7 +8,7 @@ function sameLocation(a, b) {
 function rand(min, max) {
   return min + Math.floor((max-min) * Math.random());
 }
-let wolfImg = document.getElementById('wolf-img');
+
 let maxWolfs = 4;
 class Wolf{
   constructor(x = 0, y = 0, size = window.CELL_W) {

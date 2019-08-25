@@ -3,6 +3,8 @@
  */
 import Wolf from "./wolf";
 import {failAlert} from './alert';
+import wImg from './img/wolf.png';
+import sImg from './img/sheep1.png';
 
 let can = document.getElementById("game"),
   context = can.getContext("2d"),
@@ -339,7 +341,7 @@ function main() {
       1,
     ratio = devicePixelRatio / backingStoreRatio;
   var isMobile = navigator.userAgent.match(
-    /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+    /(phone|pad|pod|iPhone|iPod|ios|iPad|Android)/i
   );
   [can, can2].map(function(canvas) {
     var oldWidth = canvas.width;
@@ -375,18 +377,21 @@ function main() {
     });
   loop();
 }
-let wolfImg = document.getElementById("wolf-img");
-let sheepImg = document.getElementById("sheep-img");
+let wolfImg = new Image();
+let sheepImg = new Image();
+window.wolfImg = wolfImg;
+wolfImg.src = wImg;
+sheepImg.src = sImg;
+
 let promiseArr = [sheepImg, wolfImg].map(
   el =>
     new Promise(function(resolve, reject) {
       el.onload = function() {
-        console.log("load", el);
         resolve();
       };
     })
 );
-// Promise.all(promiseArr).then((v) => {
-//     main();
-// }).catch(err => console.log(err));
-main();
+Promise.all(promiseArr).then((v) => {
+    main();
+}).catch(err => console.log(err));
+// main();

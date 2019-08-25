@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "a js game",
   "main": "index.html",
-  "dependencies": {
+  "devDependencies": {
     "_abab@2.0.0@abab": "^2.0.0",
     "_abbrev@1.1.1@abbrev": "^1.1.1",
     "_acorn-globals@4.3.2@acorn-globals": "^4.3.2",
@@ -1117,11 +1117,11 @@
     "xtend": "^4.0.1",
     "yallist": "^2.1.2"
   },
-  "devDependencies": {},
+  "dependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel index.html",
-    "build": "parcel build index.html -d /Users/imgss/Documents/code/imgss.github.io/demo/wAs --public-url /demo/wAs"
+    "build": "parcel build index.html -d ./dist --detailed-report --no-source-maps --public-url /demo/wAs"
   },
   "repository": {
     "type": "git",

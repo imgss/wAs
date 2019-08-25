@@ -1,5 +1,5 @@
 import wImg from './img/wolf.png';
-import sImg from './img/sheep.png';
+import sImg from './img/sheep1.png';
 
 let msg = document.getElementById('message');
 let avatar = msg.querySelector('img');
