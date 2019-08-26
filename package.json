@@ -1121,7 +1121,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel index.html",
-    "build": "parcel build index.html -d ./dist --detailed-report --no-source-maps --public-url /demo/wAs"
+    "build": "parcel build index.html -d ./dist --detailed-report --no-source-maps --public-url ./"
   },
   "repository": {
     "type": "git",
