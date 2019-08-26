@@ -61,13 +61,13 @@ class Wolf{
           this.size = this.size === window.CELL_W ? window.CELL_W * 1.2 : window.CELL_W;
           if (this.stuck === 1) {
             let msgs = [
-              '你等着，我叫人去',
-              '我大哥来了你就死定了',
-              '我们老大马上就到',
-              '额，是个狠人',
-              '大大大大，大哥别杀我~'
+              'I will back',
+              'I can\'t wait to eat you',
+              'my bro is on the way',
+              'Hmm, not bad',
+              'I can\'t believe it'
             ];
-            msg('wolf', msgs[Wolf.wolves.length-1] || '你还真有两下子');
+            msg('wolf', msgs[Wolf.wolves.length-1] || 'You think you win ? let\'t see');
           }
           this.stuck++;
           if (this.stuck > 6 && !this.isCallHelped) {

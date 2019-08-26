@@ -88,7 +88,7 @@ function wallsInit() {
 }
 //画出墙
 function wallsDraw() {
-  context.fillStyle = "rgba(255,165,0,0.5)";
+  context.fillStyle = "rgba(255,165,0,1)";
   walls.forEach(function(wall) {
     wall.draw();
   });
