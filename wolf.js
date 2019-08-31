@@ -31,50 +31,51 @@ class Wolf{
   }
 
   move() {
-      let now = Date.now();
-      if (now - this._timeStamp < 1000 / this.speed) return;
-      this._timeStamp = now;
-      if (sameLocation(this, window.sheep)) {
-          failAlert();
-          return;
+    if (sameLocation(this, window.sheep)) {
+      failAlert();
+      return;
+    }
+    let now = Date.now();
+    if (now - this._timeStamp < 1000 / this.speed) return;
+    this._timeStamp = now;
+
+    if (!this.path) {
+      let sheep = window.sheep;
+      let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/window.CELL_W, (sheep.y)/window.CELL_W]);
+      pathFinder.beginFill(this);
+      // 找到路径
+      if (pathFinder.path) {
+        this.path = pathFinder.path;
       }
-      if (!this.path) {
-          let sheep = window.sheep;
-          let pathFinder = new Pathfinder(window.gridData, [(sheep.x)/window.CELL_W, (sheep.y)/window.CELL_W]);
-          pathFinder.beginFill(this);
-          // 找到路径
-          if (pathFinder.path) {
-              this.path = pathFinder.path;
-          }
-      }
-      if (this.path) {
-          this.size = window.CELL_W;
-          this.stuck = 0;
-          let point = this.path.shift();
-          if (point) {
-              this.x = point[0] * window.CELL_W;
-              this.y = point[1] * window.CELL_W;
-          } else {
-              this.path = null;
-          }
+    }
+    if (this.path) {
+      this.size = window.CELL_W;
+      this.stuck = 0;
+      let point = this.path.shift();
+      if (point) {
+        this.x = point[0] * window.CELL_W;
+        this.y = point[1] * window.CELL_W;
       } else {
-          this.size = this.size === window.CELL_W ? window.CELL_W * 1.2 : window.CELL_W;
-          if (this.stuck === 1) {
-            let msgs = [
-              'I will back',
-              'I can\'t wait to eat you',
-              'my bro is on the way',
-              'Hmm, not bad',
-              'I can\'t believe it'
-            ];
-            msg('wolf', msgs[Wolf.wolves.length-1] || 'You think you win ? let\'t see');
-          }
-          this.stuck++;
-          if (this.stuck > 6 && !this.isCallHelped) {
-            Wolf.callHelp();
-            this.isCallHelped = true;
-          }
+        this.path = null;
       }
+    } else {
+      this.size = this.size === window.CELL_W ? window.CELL_W * 1.2 : window.CELL_W;
+      if (this.stuck === 1) {
+        let msgs = [
+          'I will back',
+          'I can\'t wait to eat you',
+          'my bro is on the way',
+          'Hmm, not bad',
+          'I can\'t believe it'
+        ];
+        msg('wolf', msgs[Wolf.wolves.length-1] || 'You think you win ? let\'t see');
+      }
+      this.stuck++;
+      if (this.stuck > 6 && !this.isCallHelped) {
+        Wolf.callHelp();
+        this.isCallHelped = true;
+      }
+    }
   }
 
   static callHelp() {

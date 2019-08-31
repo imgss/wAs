@@ -6,11 +6,13 @@ import {failAlert} from './alert';
 import wImg from './img/wolf.png';
 import sImg from './img/sheep1.png';
 
+const GRID_NUM = 25; // 20 25
+const BLOCK_COLOR = "#4d3304";
 let can = document.getElementById("game"),
   context = can.getContext("2d"),
   can2 = document.getElementById("bg"),
   ctx = can2.getContext("2d");
-const GRID_NUM = 25; // 20 25
+
 
 let CELL_W;
 
@@ -24,7 +26,8 @@ let sheep = {
     context.drawImage(sheepImg, this.x, this.y, CELL_W, CELL_W);
   },
   init() {
-    this.x = this.y = can.width - CELL_W;
+    this.y = 0;
+    this.x = can.width - CELL_W;
   }
 };
 
@@ -88,7 +91,7 @@ function wallsInit() {
 }
 //画出墙
 function wallsDraw() {
-  context.fillStyle = "rgba(255,165,0,1)";
+  context.fillStyle = BLOCK_COLOR;
   walls.forEach(function(wall) {
     wall.draw();
   });
