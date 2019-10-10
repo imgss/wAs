@@ -1,10 +1,6 @@
 # wAs
 
-试玩地址: https://www.imgss.top/demo/wAs/
-
-或者扫描下方的二维码
-
-![qr](https://raw.githubusercontent.com/imgss/wAs/master/img/qr.png)
+试玩地址: https://js13kgames.com/games/wolf-and-sheep/index.html
 
 一个益智小游戏，有3个角色：
 
