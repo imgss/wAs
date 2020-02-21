@@ -1022,7 +1022,7 @@
     "sax": "^1.2.4",
     "semver": "^5.7.0",
     "send": "^0.17.1",
-    "serialize-to-js": "^1.2.2",
+    "serialize-to-js": "^3.0.1",
     "serve-static": "^1.14.1",
     "set-value": "^2.0.0",
     "setimmediate": "^1.0.5",
