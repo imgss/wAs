@@ -890,7 +890,7 @@
     "nanomatch": "^1.2.13",
     "nice-try": "^1.0.5",
     "node-addon-api": "^1.6.3",
-    "node-forge": "^0.7.6",
+    "node-forge": "^0.10.0",
     "node-libs-browser": "^2.2.0",
     "node-releases": "^1.1.21",
     "nopt": "^4.0.1",
